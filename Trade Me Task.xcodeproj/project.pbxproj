@@ -8,12 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		B8205D6E1CC4C841000B26E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D6D1CC4C841000B26E4 /* AppDelegate.swift */; };
-		B8205D701CC4C841000B26E4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D6F1CC4C841000B26E4 /* ViewController.swift */; };
+		B8205D701CC4C841000B26E4 /* TmtHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D6F1CC4C841000B26E4 /* TmtHomeViewController.swift */; };
 		B8205D731CC4C841000B26E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8205D711CC4C841000B26E4 /* Main.storyboard */; };
 		B8205D751CC4C841000B26E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8205D741CC4C841000B26E4 /* Assets.xcassets */; };
 		B8205D781CC4C841000B26E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8205D761CC4C841000B26E4 /* LaunchScreen.storyboard */; };
 		B8205D831CC4C841000B26E4 /* Trade_Me_TaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D821CC4C841000B26E4 /* Trade_Me_TaskTests.swift */; };
 		B8205D8E1CC4C841000B26E4 /* Trade_Me_TaskUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D8D1CC4C841000B26E4 /* Trade_Me_TaskUITests.swift */; };
+		B8205DA11CC4F3F7000B26E4 /* ClassExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205DA01CC4F3F7000B26E4 /* ClassExtensions.swift */; };
+		B8FB9C981CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB9C971CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift */; };
+		B8FB9C9A1CC626E900AC7576 /* ConstantsAndEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB9C991CC626E900AC7576 /* ConstantsAndEnums.swift */; };
+		B8FB9C9C1CC6371200AC7576 /* TmtBrowseCategoriesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB9C9B1CC6371200AC7576 /* TmtBrowseCategoriesTableViewController.swift */; };
+		B8FCA5DE1CC6C5A90004E709 /* TmtCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCA5DD1CC6C5A90004E709 /* TmtCategory.swift */; };
+		B8FCA5E21CC712D40004E709 /* TmtSubCategoriesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCA5E11CC712D40004E709 /* TmtSubCategoriesTableViewCell.swift */; };
+		B8FCA5E41CC712F70004E709 /* TmtSubCategoriesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCA5E31CC712F70004E709 /* TmtSubCategoriesTableViewController.swift */; };
+		B8FCA5E61CC743830004E709 /* TmtListingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCA5E51CC743830004E709 /* TmtListingsTableViewController.swift */; };
+		B8FCA5E81CC75C2C0004E709 /* TmtListingsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCA5E71CC75C2C0004E709 /* TmtListingsTableViewCell.swift */; };
+		B8FCA5EA1CC77FBB0004E709 /* TradeMeOauthHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FCA5E91CC77FBB0004E709 /* TradeMeOauthHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +46,7 @@
 /* Begin PBXFileReference section */
 		B8205D6A1CC4C841000B26E4 /* Trade Me Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Trade Me Task.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8205D6D1CC4C841000B26E4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B8205D6F1CC4C841000B26E4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		B8205D6F1CC4C841000B26E4 /* TmtHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TmtHomeViewController.swift; sourceTree = "<group>"; };
 		B8205D721CC4C841000B26E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B8205D741CC4C841000B26E4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B8205D771CC4C841000B26E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,6 +57,16 @@
 		B8205D891CC4C841000B26E4 /* Trade Me TaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Trade Me TaskUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8205D8D1CC4C841000B26E4 /* Trade_Me_TaskUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trade_Me_TaskUITests.swift; sourceTree = "<group>"; };
 		B8205D8F1CC4C841000B26E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B8205DA01CC4F3F7000B26E4 /* ClassExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassExtensions.swift; sourceTree = "<group>"; };
+		B8FB9C971CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeMeTaskApiAccessModel.swift; sourceTree = "<group>"; };
+		B8FB9C991CC626E900AC7576 /* ConstantsAndEnums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstantsAndEnums.swift; sourceTree = "<group>"; };
+		B8FB9C9B1CC6371200AC7576 /* TmtBrowseCategoriesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtBrowseCategoriesTableViewController.swift; sourceTree = "<group>"; };
+		B8FCA5DD1CC6C5A90004E709 /* TmtCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtCategory.swift; sourceTree = "<group>"; };
+		B8FCA5E11CC712D40004E709 /* TmtSubCategoriesTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtSubCategoriesTableViewCell.swift; sourceTree = "<group>"; };
+		B8FCA5E31CC712F70004E709 /* TmtSubCategoriesTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtSubCategoriesTableViewController.swift; sourceTree = "<group>"; };
+		B8FCA5E51CC743830004E709 /* TmtListingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtListingsTableViewController.swift; sourceTree = "<group>"; };
+		B8FCA5E71CC75C2C0004E709 /* TmtListingsTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtListingsTableViewCell.swift; sourceTree = "<group>"; };
+		B8FCA5E91CC77FBB0004E709 /* TradeMeOauthHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeMeOauthHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,12 +117,12 @@
 		B8205D6C1CC4C841000B26E4 /* Trade Me Task */ = {
 			isa = PBXGroup;
 			children = (
-				B8205D6D1CC4C841000B26E4 /* AppDelegate.swift */,
-				B8205D6F1CC4C841000B26E4 /* ViewController.swift */,
+				B8205D9C1CC4C855000B26E4 /* Model */,
+				B8205D9D1CC4C85E000B26E4 /* View */,
+				B8205D9E1CC4C865000B26E4 /* Controller */,
+				B8205D9F1CC4DD61000B26E4 /* Custom Class */,
+				B8205D9B1CC4C849000B26E4 /* Supporting Files */,
 				B8205D711CC4C841000B26E4 /* Main.storyboard */,
-				B8205D741CC4C841000B26E4 /* Assets.xcassets */,
-				B8205D761CC4C841000B26E4 /* LaunchScreen.storyboard */,
-				B8205D791CC4C841000B26E4 /* Info.plist */,
 			);
 			path = "Trade Me Task";
 			sourceTree = "<group>";
@@ -123,6 +143,56 @@
 				B8205D8F1CC4C841000B26E4 /* Info.plist */,
 			);
 			path = "Trade Me TaskUITests";
+			sourceTree = "<group>";
+		};
+		B8205D9B1CC4C849000B26E4 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B8205D6D1CC4C841000B26E4 /* AppDelegate.swift */,
+				B8205D741CC4C841000B26E4 /* Assets.xcassets */,
+				B8205D761CC4C841000B26E4 /* LaunchScreen.storyboard */,
+				B8205D791CC4C841000B26E4 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B8205D9C1CC4C855000B26E4 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B8FB9C971CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift */,
+				B8FCA5E91CC77FBB0004E709 /* TradeMeOauthHelper.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		B8205D9D1CC4C85E000B26E4 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B8FCA5E11CC712D40004E709 /* TmtSubCategoriesTableViewCell.swift */,
+				B8FCA5E71CC75C2C0004E709 /* TmtListingsTableViewCell.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		B8205D9E1CC4C865000B26E4 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				B8205D6F1CC4C841000B26E4 /* TmtHomeViewController.swift */,
+				B8FB9C9B1CC6371200AC7576 /* TmtBrowseCategoriesTableViewController.swift */,
+				B8FCA5E31CC712F70004E709 /* TmtSubCategoriesTableViewController.swift */,
+				B8FCA5E51CC743830004E709 /* TmtListingsTableViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		B8205D9F1CC4DD61000B26E4 /* Custom Class */ = {
+			isa = PBXGroup;
+			children = (
+				B8205DA01CC4F3F7000B26E4 /* ClassExtensions.swift */,
+				B8FB9C991CC626E900AC7576 /* ConstantsAndEnums.swift */,
+				B8FCA5DD1CC6C5A90004E709 /* TmtCategory.swift */,
+			);
+			name = "Custom Class";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +263,7 @@
 				TargetAttributes = {
 					B8205D691CC4C841000B26E4 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = FX3X9EUZ62;
 					};
 					B8205D7D1CC4C841000B26E4 = {
 						CreatedOnToolsVersion = 7.3;
@@ -256,8 +327,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B8205D701CC4C841000B26E4 /* ViewController.swift in Sources */,
+				B8FCA5E61CC743830004E709 /* TmtListingsTableViewController.swift in Sources */,
+				B8205D701CC4C841000B26E4 /* TmtHomeViewController.swift in Sources */,
+				B8205DA11CC4F3F7000B26E4 /* ClassExtensions.swift in Sources */,
 				B8205D6E1CC4C841000B26E4 /* AppDelegate.swift in Sources */,
+				B8FB9C9A1CC626E900AC7576 /* ConstantsAndEnums.swift in Sources */,
+				B8FB9C981CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift in Sources */,
+				B8FCA5EA1CC77FBB0004E709 /* TradeMeOauthHelper.swift in Sources */,
+				B8FCA5E81CC75C2C0004E709 /* TmtListingsTableViewCell.swift in Sources */,
+				B8FB9C9C1CC6371200AC7576 /* TmtBrowseCategoriesTableViewController.swift in Sources */,
+				B8FCA5E41CC712F70004E709 /* TmtSubCategoriesTableViewController.swift in Sources */,
+				B8FCA5E21CC712D40004E709 /* TmtSubCategoriesTableViewCell.swift in Sources */,
+				B8FCA5DE1CC6C5A90004E709 /* TmtCategory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +482,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Trade Me Task/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pengyanb.Trade-Me-Task";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -412,7 +495,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Trade Me Task/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pengyanb.Trade-Me-Task";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -484,6 +569,7 @@
 				B8205D941CC4C841000B26E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B8205D951CC4C841000B26E4 /* Build configuration list for PBXNativeTarget "Trade Me TaskTests" */ = {
 			isa = XCConfigurationList;
@@ -492,6 +578,7 @@
 				B8205D971CC4C841000B26E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B8205D981CC4C841000B26E4 /* Build configuration list for PBXNativeTarget "Trade Me TaskUITests" */ = {
 			isa = XCConfigurationList;
@@ -500,6 +587,7 @@
 				B8205D9A1CC4C841000B26E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

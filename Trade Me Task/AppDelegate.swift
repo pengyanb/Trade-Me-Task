@@ -14,6 +14,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
+    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+        print("[Application handleOpenUrl]: \(url.absoluteString)")
+        let urlString = url.absoluteString
+        let urlComponents = urlString.componentsSeparatedByString("?")
+        if urlComponents.count > 1{
+            let urlOfInterest = urlComponents[1]
+            let urlOfInterestComponents = urlOfInterest.componentsSeparatedByString("&")
+            var oauthToken : String? = nil
+            var oauthVerifier : String? = nil
+            for component in urlOfInterestComponents{
+                let keyValuePair = component.componentsSeparatedByString("=")
+                if keyValuePair.count > 1{
+                    if keyValuePair[0] == "oauth_token"{
+                        print("[oauth_token]: \(keyValuePair[1])")
+                        oauthToken = keyValuePair[1]
+                    }
+                    else if keyValuePair[0] == "oauth_verifier"{
+                        print("[oauth_verifier]: \(keyValuePair[1])")
+                        oauthVerifier = keyValuePair[1]
+                    }
+                }
+            }
+            
+            if let token = oauthToken, verifier = oauthVerifier{
+                if var tempTokenDictionary = NSUserDefaults.standardUserDefaults().objectForKey(Constants.NSUSER_DEFAULT_TEMP_TOKEN_KEY) as? [String:String]{
+                    if tempTokenDictionary["oauth_token"] == token{
+                        tempTokenDictionary["oauth_verifier"] = verifier
+                        NSUserDefaults.standardUserDefaults().setObject(tempTokenDictionary, forKey: Constants.NSUSER_DEFAULT_TEMP_TOKEN_KEY)
+                        NSUserDefaults.standardUserDefaults().synchronize()
+                    }
+                }
+            }
+        }
+        return true
+    }
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         return true
