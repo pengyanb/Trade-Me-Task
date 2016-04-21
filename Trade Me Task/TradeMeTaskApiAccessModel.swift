@@ -24,6 +24,13 @@ class TradeMeTaskApiAccessModel: NSObject {
             return tmtSearchResults
         }
     }
+    
+    private var tmtListingDetail : TmtListingDetail? = TmtListingDetail()
+    var getTmtListingDetail : TmtListingDetail?{
+        get{
+            return tmtListingDetail
+        }
+    }
         
     // MARK: - Public API
     func tmtGategoryBrowsing(categoryNumber:String, depth:Int, withCount:Bool){
@@ -163,6 +170,54 @@ class TradeMeTaskApiAccessModel: NSObject {
                         print("Error serializing Json Response : \(error)")
                         self!.postModelChangedNotification("Error serializing Json Response : \(error)", type: "error")
                     }
+                }
+            })
+            task.resume()
+        }
+    }
+    
+    func tmtRetrieveListingDetails(listingId:Int, incrementViewCount:Bool?, questionLimit:Int?, returnMemberProfile:Bool?){
+        tmtListingDetail = TmtListingDetail()
+        var listingDetailsUrl = Constants.TRADEME_LISTING_DETAILS_URL + "\(listingId).json?"
+        if let _incrementViewCount = incrementViewCount{
+            listingDetailsUrl += "increment_view_count=\(_incrementViewCount)&"
+        }
+        if let _questionLimit = questionLimit{
+            listingDetailsUrl += "question_limit=\(_questionLimit)&"
+        }
+        if let _returnMemberProfile = returnMemberProfile{
+            listingDetailsUrl += "return_member_profile=\(_returnMemberProfile)&"
+        }
+        listingDetailsUrl = listingDetailsUrl.stringByTrimmingCharactersInSet(NSCharacterSet.init(charactersInString: "?&"))
+        print("[ListingDetails URL]: \(listingDetailsUrl)")
+        
+        if let requestUrl = NSURL.init(string: listingDetailsUrl){
+            let oauthHelper = TradeMeOauthHelper()
+            let getRequest = NSMutableURLRequest(URL: requestUrl)
+            getRequest.HTTPMethod = "GET"
+            getRequest.timeoutInterval = Constants.TIMING_SESSION_REQUEST_TIMEOUT
+            if let authHeader = oauthHelper.generateAuthorizationHeader(Constants.CREDENTIAL_TRADEME_CONSUMER_KEY, consumerSecret: Constants.CREDENTIAL_TRADEME_CONSUMER_SECRET){
+                getRequest.setValue(authHeader, forHTTPHeaderField: "Authorization")
+            }
+            let task = NSURLSession.sharedSession().dataTaskWithRequest(getRequest, completionHandler: { [weak self] (data, response, error) in
+                guard error == nil && data != nil else{
+                    print("Error occured while retrieving listing details")
+                    self!.postModelChangedNotification("Error occured while retrieving listing details", type: "error")
+                    return
+                }
+                
+                do{
+                    let jsonResponse = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
+                    //print("[JSON Response]: \(jsonResponse)")
+                    if let parsedListingDetail = self!.processTmtListingDetailsJsonResponse(jsonResponse){
+                        self!.tmtListingDetail = parsedListingDetail
+                        self!.postModelChangedNotification(Constants.NOTI_UPDATE_LISTING_DETAILS_LOADED, type: "update")
+                    }
+                    
+                }
+                catch{
+                    print("Error serializing Json Response : \(error)")
+                    self!.postModelChangedNotification("Error serializing Json Response : \(error)", type: "error")
                 }
             })
             task.resume()
@@ -570,6 +625,74 @@ class TradeMeTaskApiAccessModel: NSObject {
             return searchResult
         }
         
+        return nil
+    }
+    
+    private func processTmtListingDetailsJsonResponse(jsonObj:AnyObject)->TmtListingDetail?{
+        if let jsonObject = jsonObj as? [String:AnyObject]{
+            let listingDetail = TmtListingDetail()
+            if let ldTitle = jsonObject["Title"] as? String{
+                listingDetail.ldTitle = ldTitle
+            }
+            if let ldEndDate = jsonObject["EndDate"] as? String{
+                if let endDate = parseNSDateFromString(ldEndDate){
+                    listingDetail.ldEndDate = endDate
+                }
+            }
+            if let ldSuburb = jsonObject["Suburb"] as? String{
+                listingDetail.ldSuburb = ldSuburb
+            }
+            if let ldPriceDisplay = jsonObject["PriceDisplay"] as? String{
+                listingDetail.ldPriceDisplay = ldPriceDisplay
+            }
+            if let ldBody = jsonObject["Body"] as? String{
+                listingDetail.ldBody = ldBody
+            }
+            if let ldPhotos = jsonObject["Photos"] as? [[String:AnyObject]]{
+                for ldPhoto in ldPhotos{
+                    let photo = TmtListingDetailPhoto()
+                    if let photoId = ldPhoto["PhotoId"] as? Int{
+                        photo.ldpPhotoId = photoId
+                    }
+                    if let value = ldPhoto["Value"] as? [String:AnyObject]{
+                        photo.ldpValue = TmtListingDetailPhotoUrl()
+                        if let thumbnail = value["Thumbnail"] as? String{
+                            photo.ldpValue?.ldpuThumbnail = thumbnail
+                        }
+                        if let list = value["List"] as? String{
+                            photo.ldpValue?.ldpuList = list
+                        }
+                        if let medium = value["Medium"] as? String{
+                            photo.ldpValue?.ldpuMedium = medium
+                        }
+                        if let gallery = value["Gallery"] as? String{
+                            photo.ldpValue?.ldpuGallery = gallery
+                        }
+                        if let large = value["Large"] as? String{
+                            photo.ldpValue?.ldpuLarge = large
+                        }
+                        if let fullSize = value["FullSize"] as? String{
+                            photo.ldpValue?.ldpuFullSize = fullSize
+                        }
+                        if let plusSize = value["PlusSize"] as? String{
+                            photo.ldpValue?.ldpuPlusSize = plusSize
+                        }
+                        if let phId = value["PhotoId"] as? Int{
+                            photo.ldpValue?.ldpuPhotoId = phId
+                        }
+                        if let originalWidth  = value["OriginalWidth"] as? Int{
+                            photo.ldpValue?.ldpuOriginalWidth = originalWidth
+                        }
+                        if let originalHeight = value["OriginalHeight"] as? Int{
+                            photo.ldpValue?.ldpuOriginalHeight = originalHeight
+                        }
+                        
+                    }
+                    listingDetail.ldPhotos.append(photo)
+                }
+            }
+            return listingDetail
+        }
         return nil
     }
     

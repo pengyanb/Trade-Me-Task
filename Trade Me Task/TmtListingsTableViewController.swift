@@ -19,6 +19,8 @@ class TmtListingsTableViewController: UITableViewController {
     private let loadingView = UIView()
     private let spinner = UIActivityIndicatorView()
     
+    private var readyToFetchMoreListing  = true
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,13 +37,16 @@ class TmtListingsTableViewController: UITableViewController {
         super.viewWillDisappear(animated)
         deregisterNotifications()
     }
+    
     // MARK: - Private functions [Loading Spinner]
     private func showLoadingScreen(){
         loadingView.hidden = false
+        readyToFetchMoreListing = false
         spinner.startAnimating()
     }
     private func hideLoadingScreen(){
         loadingView.hidden = true
+        readyToFetchMoreListing = true
         spinner.stopAnimating()
     }
     private func setLoadingScreen(){
@@ -146,7 +151,7 @@ class TmtListingsTableViewController: UITableViewController {
                         }
                         listingCell.listingCityLabel.text = listing.liRegion ?? ""
                         listingCell.listingNameLabel.text = listing.liTitle ?? ""
-                        listingCell.listingPriceLabel.text = (listing.liStartPrice != nil ? "$\(listing.liStartPrice!)" : "")
+                        listingCell.listingPriceLabel.text = (listing.liStartPrice != nil ? "$\(listing.liPriceDisplay!)" : "")
                         listingCell.listingTimeLabel.text = (listing.liStartDate != nil ? "\(listing.liStartDate!.generateDateTimeString())" : "")
                     }
                 }
@@ -156,6 +161,62 @@ class TmtListingsTableViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let pageIndex = Int(indexPath.row / Constants.COUNT_LISTINGS_LOAD_QUOTA)
+        let listingIndex = indexPath.row - pageIndex * Constants.COUNT_LISTINGS_LOAD_QUOTA
+        if let tmtSearchResults = tmtModel?.getTmtSearchResults{
+            if tmtSearchResults.count > pageIndex{
+                let tmtSearchResult = tmtSearchResults[pageIndex]
+                if listingIndex < tmtSearchResult.srList.count{
+                    self.performSegueWithIdentifier(Constants.SEGUE_SHOW_LISTING_DETAILS, sender: self)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Navigation
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let identifier = segue.identifier{
+            if identifier == Constants.SEGUE_SHOW_LISTING_DETAILS{
+                if let destVc = segue.destinationViewController as? TmtListingDetailsViewController{
+                    if let indexPath = self.tableView.indexPathForSelectedRow{
+                        let pageIndex = Int(indexPath.row / Constants.COUNT_LISTINGS_LOAD_QUOTA)
+                        let listingIndex = indexPath.row - pageIndex * Constants.COUNT_LISTINGS_LOAD_QUOTA
+                        if let tmtSearchResults = tmtModel?.getTmtSearchResults{
+                            if tmtSearchResults.count > pageIndex{
+                                let tmtSearchResult = tmtSearchResults[pageIndex]
+                                if listingIndex < tmtSearchResult.srList.count{
+                                    let listing  = tmtSearchResult.srList[listingIndex]
+                                    destVc.ldListingId = listing.liListingId
+                                    destVc.tmtModel = tmtModel
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // MARK: - scrollView Did scroll [Load more listing if reach bottom]
+    override func scrollViewDidScroll(scrollView: UIScrollView) {
+       
+        let currentOffset = scrollView.contentOffset.y
+        let maximumOffset = scrollView.contentSize.height - scrollView.frame.size.height
+        
+        if (maximumOffset - currentOffset <= 20.0){
+            if readyToFetchMoreListing{
+                if let tmtSearchResults = tmtModel?.getTmtSearchResults
+                {
+                    if let tmtsearchResult = tmtSearchResults.last{
+                        showLoadingScreen()
+                        tmtModel?.tmtGeneralSearch(nil, category: tmtSelectedCategoryNumber, clearance: nil, condition: nil, dataFrom: nil, expired: nil, memberListing: nil, page: tmtsearchResult.srPage, pay: nil, photoSize: EnumGeneralSearchPhotoSize.List, returnMetadata: nil, rows: Constants.COUNT_LISTINGS_LOAD_QUOTA, searchString: searchString, shippingMethod: nil, sortOrder: sortOrder, userDistrict: nil, userRegion: nil, clearExistingResult: false)
+                    }
+                }
+            }
+        }
+        
+    }
 
     /*
     // Override to support conditional editing of the table view.
@@ -192,14 +253,6 @@ class TmtListingsTableViewController: UITableViewController {
     }
     */
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    
 
 }

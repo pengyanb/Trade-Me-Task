@@ -42,11 +42,13 @@ class Constants{
     static let NOTI_UPDATE_CATEGORIES_LOADED = "categoriesLoaded"
     static let NOTI_UPDATE_SUB_CATEGORIES_LOADED = "subCategoriesLoaded"
     static let NOTI_UPDATE_SEARCH_RESULT_LOADED = "searchResultLoaded"
+    static let NOTI_UPDATE_LISTING_DETAILS_LOADED = "listingDetailsLoaded"
     
     // MARK: - Segue
     static let SEGUE_SHOW_BROWSE_CATEGORIES = "showBrowseCategoriesSegueIdentifier"
     static let SEGUE_SHOW_SUB_CATEGORIES = "showSubCategoriesSegueIdentifier"
     static let SEGUE_SHOW_LISTINGS = "showListingsSegueIdentifier"
+    static let SEGUE_SHOW_LISTING_DETAILS = "showListingDetailsSegueIdentifier"
     
     // MARK: - Table View Cell
     static let CELL_IDENTIFIER_BROWSE_CATEGORIES = "browseCategoriesTableViewCellIdentifier"
@@ -304,9 +306,35 @@ enum EnumSearchResultParameterType : Int{
 
 
 
+// MARK: - Enum Listing Details
+enum EnumListingDetailReserveState : Int{
+    case None = 0
+    case Met = 1
+    case NotMet = 2
+    case NotApplicable = 3
+    func associatedString()->String{
+        switch  self {
+        case .None:
+            return "None"
+        case .Met:
+            return "Met"
+        case .NotMet:
+            return "NotMet"
+        case .NotApplicable:
+            return "NotApplicable"
+        }
+    }
+}
 
-
-
+enum EnumListingDetailAttributeType : Int{
+    case None = 0
+    case Boolean = 1
+    case Integer = 2
+    case Decimal = 3
+    case String = 4
+    case DateTime = 5
+    
+}
 
 
 

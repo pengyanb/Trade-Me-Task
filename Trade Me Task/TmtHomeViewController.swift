@@ -95,6 +95,7 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
         //print("[Offset]: \(scrollView.contentOffset.y)")
         //print("[View Height]: \(self.view.bounds.size.height)")
         //print("[Multiplier]: \(newHeightMultiplier)")
+        /*
         if scrollViewLastContentOffset > scrollView.contentOffset.y {   //scrolled down
              let newHeightMultiplier = searchSectionHeightLayoutConstraint.multiplier + scrollView.contentOffset.y / self.view.bounds.size.height
             if searchSectionHeightLayoutConstraint.multiplier < CONST_SEARCH_SECTION_NORMAL_MODE_HEIGHT_PROPORTION{
@@ -111,7 +112,7 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
             }
         }
         scrollViewLastContentOffset = scrollView.contentOffset.y
- 
+         */
     }
     
     // MARK: - private func
