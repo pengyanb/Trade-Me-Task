@@ -21,7 +21,7 @@
 
 ### Custom Class
 * ClassExtension
-* ConstantsAndEnums
-* TmtCategory
-* TmtSearchResultRelatedClass
-* TmtListingDetailsRelatedClass
+* ConstantsAndEnums - Central place where contains all constants and enums used by the project
+* TmtCategory - Custom Class for holding the parsed JSON response from the browsing categories request
+* TmtSearchResultRelatedClass - Custom Classes for holding the parsed JSON response from the searching request
+* TmtListingDetailsRelatedClass - Custom Classes for holding the parsed JSON response from the listing details request
