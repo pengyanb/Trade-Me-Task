@@ -18,6 +18,12 @@ class TradeMeTaskApiAccessModel: NSObject {
         }
     }
     
+    private var tmtSearchResults : [TmtSearchResult] = [TmtSearchResult]()
+    var getTmtSearchResults : [TmtSearchResult]{
+        get{
+            return tmtSearchResults
+        }
+    }
         
     // MARK: - Public API
     func tmtGategoryBrowsing(categoryNumber:String, depth:Int, withCount:Bool){
@@ -65,7 +71,10 @@ class TradeMeTaskApiAccessModel: NSObject {
         }
     }
     
-    func tmtGeneralSearch(buy:EnumGeneralSearchBuy?, category:String?, clearance:EnumGeneralSearchClearance?, condition:EnumGeneralSearchCondition?, dataFrom:NSDate?, expired:Bool?, memberListing:Int?, page:Int?, pay:EnumGeneralSearchPay?, photoSize:EnumGeneralSearchPhotoSize?, returnMetadata:Bool?, rows:Int?, searchString:String?, shippingMethod:EnumGeneralSearchShippingMethod?, sortOrder:EnumGeneralSearchSortOrder?, userDistrict:Int?, userRegion:Int?){
+    func tmtGeneralSearch(buy:EnumGeneralSearchBuy?, category:String?, clearance:EnumGeneralSearchClearance?, condition:EnumGeneralSearchCondition?, dataFrom:NSDate?, expired:Bool?, memberListing:Int?, page:Int?, pay:EnumGeneralSearchPay?, photoSize:EnumGeneralSearchPhotoSize?, returnMetadata:Bool?, rows:Int?, searchString:String?, shippingMethod:EnumGeneralSearchShippingMethod?, sortOrder:EnumGeneralSearchSortOrder?, userDistrict:Int?, userRegion:Int?, clearExistingResult:Bool = true){
+        if clearExistingResult{
+            tmtSearchResults = [TmtSearchResult]()
+        }
         var searchUrl = Constants.TRADEME_SEARCH_URL + "?"
         if let _buy = buy{
             searchUrl += "buy=" + _buy.associatedString() + "&"
@@ -125,9 +134,13 @@ class TradeMeTaskApiAccessModel: NSObject {
         print("[Search URL]: \(searchUrl)")
         
         if let requestUrl = NSURL.init(string: searchUrl){
+            let oauthHelper = TradeMeOauthHelper()
             let getRequest = NSMutableURLRequest(URL: requestUrl)
             getRequest.HTTPMethod = "GET"
             getRequest.timeoutInterval = Constants.TIMING_SESSION_REQUEST_TIMEOUT
+            if let  authHeader = oauthHelper.generateAuthorizationHeader(Constants.CREDENTIAL_TRADEME_CONSUMER_KEY, consumerSecret: Constants.CREDENTIAL_TRADEME_CONSUMER_SECRET){
+                getRequest.setValue(authHeader, forHTTPHeaderField: "Authorization")
+            }
             let task = NSURLSession.sharedSession().dataTaskWithRequest(getRequest, completionHandler: { [weak self] (data, response, error) in
                 if self != nil{
                     guard error == nil && data != nil else{
@@ -138,7 +151,13 @@ class TradeMeTaskApiAccessModel: NSObject {
                     
                     do{
                         let jsonResponse = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.AllowFragments)
-                        print("[JSON Response]: \(jsonResponse)")
+                        //print("[JSON Response]: \(jsonResponse)")
+                        if let parsedSearchResult = self!.processTmtGeneralSearchJsonResponse(jsonResponse){
+                            print("[TmtSearchResult]:\n\(parsedSearchResult)")
+                            self!.tmtSearchResults.append(parsedSearchResult)
+                            self!.postModelChangedNotification(Constants.NOTI_UPDATE_SEARCH_RESULT_LOADED, type: "update")
+                        }
+                        
                     }
                     catch{
                         print("Error serializing Json Response : \(error)")
@@ -148,6 +167,12 @@ class TradeMeTaskApiAccessModel: NSObject {
             })
             task.resume()
         }
+    }
+    
+    func downloadDataFromUrl(url: NSURL, completion: ((data:NSData?, response : NSURLResponse?, error: NSError?)->Void)){
+        NSURLSession.sharedSession().dataTaskWithURL(url) { (data, response, error) in
+            completion(data: data, response: response, error: error)
+        }.resume()
     }
     
     // MARK: - Private functions
@@ -185,6 +210,377 @@ class TradeMeTaskApiAccessModel: NSObject {
             return category
         }
         
+        return nil
+    }
+    
+    private func processTmtGeneralSearchJsonResponse(jsonObj:AnyObject)->TmtSearchResult?{
+        if let jsonObject = jsonObj as? [String:AnyObject]{
+            let searchResult = TmtSearchResult()
+            if let srTotalCount =  jsonObject["TotalCount"] as? Int{
+                searchResult.srTotalCount = srTotalCount
+            }
+            if let srPage = jsonObject["Page"] as? Int{
+                searchResult.srPage = srPage
+            }
+            if let srPageSize = jsonObject["PageSize"] as? Int{
+                searchResult.srPageSize = srPageSize
+            }
+            if let srListElements = jsonObject["List"] as? [[String:AnyObject]]{
+                for listElement in srListElements{
+                    let list = TmtSearchResultListing()
+                    if let liListingId = listElement["ListingId"] as? Int{
+                        list.liListingId = liListingId
+                    }
+                    if let liTitle = listElement["Title"] as? String{
+                        list.liTitle = liTitle
+                    }
+                    if let liCategory = listElement["Category"] as? String{
+                        list.liCategory = liCategory
+                    }
+                    if let liStartPrice = listElement["StartPrice"] as? Double{
+                        list.liStartPrice = liStartPrice
+                    }
+                    if let liBuyNowPrice = listElement["BuyNowPrice"] as? Double{
+                        list.liBuyNowPrice = liBuyNowPrice
+                    }
+                    if let liStartDate = listElement["StartDate"] as? String{
+                        if let startDate = parseNSDateFromString(liStartDate){
+                            list.liStartDate = startDate
+                        }
+                    }
+                    if let liEndDate = listElement["EndDate"] as? String{
+                        if let endDate = parseNSDateFromString(liEndDate){
+                            list.liEndDate = endDate
+                        }
+                    }
+                    if let liIsFeatured = listElement["IsFeatured"] as? Bool{
+                        list.liIsFeatured = liIsFeatured
+                    }
+                    if let liHasGallery = listElement["HasGallery"] as? Bool{
+                        list.liHasGallery = liHasGallery
+                    }
+                    if let liIsBold = listElement["IsBold"] as? Bool{
+                        list.liIsBold = liIsBold
+                    }
+                    if let liIsHighLighted = listElement["IsHighlighted"] as? Bool{
+                        list.liIsHighlighted = liIsHighLighted
+                    }
+                    if let liHasHomePageFeature = listElement["HasHomePageFeature"] as? Bool{
+                        list.liHasHomePageFeature = liHasHomePageFeature
+                    }
+                    if let liMaxBidAmount = listElement["MaxBidAmount"] as? Double{
+                        list.liMaxBidAmount = liMaxBidAmount
+                    }
+                    if let liAsAt = listElement["AsAt"] as? String{
+                        if let asAt = parseNSDateFromString(liAsAt){
+                            list.liAsAt = asAt
+                        }
+                    }
+                    if let liCategoryPath = listElement["CategoryPath"] as? String{
+                        list.liCategoryPath = liCategoryPath
+                    }
+                    if let liPictureHref = listElement["PictureHref"] as? String{
+                        list.liPictureHref = liPictureHref
+                    }
+                    if let liHasPayNow = listElement["HasPayNow"] as? Bool{
+                        list.liHasPayNow = liHasPayNow
+                    }
+                    if let liIsNew = listElement["IsNew"] as? Bool{
+                        list.liIsNew = liIsNew
+                    }
+                    if let liRegion = listElement["Region"] as? String{
+                        list.liRegion = liRegion
+                    }
+                    if let liSuburb = listElement["Suburb"] as? String{
+                        list.liSuburb = liSuburb
+                    }
+                    if let liBidCount = listElement["BidCount"] as? Int{
+                        list.liBidCount = liBidCount
+                    }
+                    if let liIsReserveMet = listElement["IsReserveMet"] as? Bool{
+                        list.liIsReserveMet = liIsReserveMet
+                    }
+                    if let liHasReserve = listElement["HasReserve"] as? Bool{
+                        list.liHasReserve = liHasReserve
+                    }
+                    if let liHasBuyNow = listElement["HasBuyNow"] as? Bool{
+                        list.liHasBuyNow = liHasBuyNow
+                    }
+                    if let liNoteDate = listElement["NoteDate"] as? String{
+                        if let noteDate = parseNSDateFromString(liNoteDate){
+                            list.liNoteDate = noteDate
+                        }
+                    }
+                    if let liReserveState = listElement["ReserveState"] as? Int{
+                        if let reserveState = EnumSearchResultReserveState(rawValue: liReserveState){
+                            list.liReserveState = reserveState
+                        }
+                    }
+                    if let liIsClassified = listElement["IsClassified"] as? Bool{
+                        list.liIsClassified = liIsClassified
+                    }
+                    if let liSubtitle = listElement["Subtitle"] as? String{
+                        list.liSubtitle = liSubtitle
+                    }
+                    if let liIsBuyNowOnly = listElement["IsBuyNowOnly"] as? Bool{
+                        list.liIsBuyNowOnly = liIsBuyNowOnly
+                    }
+                    if let liRemainingGalleryPlusRelists = listElement["RemainingGalleryPlusRelists"] as? Int{
+                        list.liRemainingGalleryPlusRelists = liRemainingGalleryPlusRelists
+                    }
+                    if let liIsOnWatchList = listElement["IsOnWatchList"] as? Bool{
+                        list.liIsOnWatchList = liIsOnWatchList
+                    }
+                    if let liGeographicLocationElement = listElement["GeographicLocation"] as? [String:AnyObject]{
+                        if let glLatitude = liGeographicLocationElement["Latitude"] as? Double{
+                            list.liGeographicLocation.glLatitude = glLatitude
+                        }
+                        if let glLongitude = liGeographicLocationElement["Longitude"] as? Double{
+                            list.liGeographicLocation.glLongitude = glLongitude
+                        }
+                        if let glNorthing = liGeographicLocationElement["Northing"] as? Int{
+                            list.liGeographicLocation.glNorthing = glNorthing
+                        }
+                        if let glEasting  = liGeographicLocationElement["Easting"] as? Int{
+                            list.liGeographicLocation.glEasting = glEasting
+                        }
+                        if let glAccuracy = liGeographicLocationElement["Accuracy"] as? Int{
+                            if let accuracy = EnumSearchResultGeographicLocationAccuracy(rawValue: glAccuracy){
+                                list.liGeographicLocation.glAccuracy = accuracy
+                            }
+                        }
+                    }
+                    if let liPriceDisplay = listElement["PriceDisplay"] as? String{
+                        list.liPriceDisplay = liPriceDisplay
+                    }
+                    if let liTotalReviewCount = listElement["TotalReviewCount"] as? Int{
+                        list.liTotalReviewCount = liTotalReviewCount
+                    }
+                    if let liPositiveReviewCount = listElement["PositiveReviewCount"] as? Int{
+                        list.liPositiveReviewCount = liPositiveReviewCount
+                    }
+                    if let liHasFreeShipping = listElement["HasFreeShipping"] as? Bool{
+                        list.liHasFreeShipping = liHasFreeShipping
+                    }
+                    if let liIsClearance  = listElement["IsClearance"] as? Bool{
+                        list.liIsClearance = liIsClearance
+                    }
+                    if let liWasPrice = listElement["WasPrice"] as? Double{
+                        list.liWasPrice = liWasPrice
+                    }
+                    if let liPercentageOff = listElement["PercentageOff"] as? Int{
+                        list.liPercentageOff = liPercentageOff
+                    }
+                    if let liBrandingElement = listElement["Branding"] as? [String:String]{
+                        if let brLargeSquareLogo = liBrandingElement["LargeSquareLogo"] {
+                            list.liBranding.brLargeSquareLogo = brLargeSquareLogo
+                        }
+                        if let brLargeWideLogo = liBrandingElement["LargeWideLogo"]{
+                            list.liBranding.brLargeWideLogo = brLargeWideLogo
+                        }
+                    }
+                    if let liIsSuperFeatured = listElement["IsSuperFeatured"] as? Bool{
+                        list.liIsSuperFeatured = liIsSuperFeatured
+                    }
+                    searchResult.srList.append(list)
+                }
+                if let srDidYouMean = jsonObject["DidYouMean"] as? String{
+                    searchResult.srDidYouMean = srDidYouMean
+                }
+                if let foundCategoryElements = jsonObject["FoundCategories"] as? [[String:AnyObject]]{
+                    for foundCategoryElement in foundCategoryElements{
+                        let foundCategory = TmtSearchResultFoundCategory()
+                        if let fcCount = foundCategoryElement["Count"] as? Int{
+                            foundCategory.fcCount = fcCount
+                        }
+                        if let fcCategory = foundCategoryElement["Category"] as? String{
+                            foundCategory.fcCategory = fcCategory
+                        }
+                        if let fcName = foundCategoryElement["Name"] as? String{
+                            foundCategory.fcName = fcName
+                        }
+                        if let fcIsRestricted = foundCategoryElement["IsRestricted"] as? Bool{
+                            foundCategory.fcIsRestricted = fcIsRestricted
+                        }
+                        searchResult.srFoundCategories.append(foundCategory)
+                    }
+                }
+                if let srFavouriteId = jsonObject["FavouriteId"] as? Int{
+                    searchResult.srFavouriteId = srFavouriteId
+                }
+                if let srFavouriteType = jsonObject["FavouriteType"] as? Int{
+                    if let favouriteType = EnumSearchResultFavouriteType(rawValue: srFavouriteType){
+                        searchResult.srFavouriteType = favouriteType
+                    }
+                }
+                if let srParameterElements = jsonObject["Parameters"] as? [[String:AnyObject]]{
+                    for parameterElement in srParameterElements{
+                        let parameter = TmtSearchResultParameter()
+                        if let paDisplayName = parameterElement["DisplayName"] as? String{
+                            parameter.paDisplayName = paDisplayName
+                        }
+                        if let paName = parameterElement["Name"] as? String{
+                            parameter.paName = paName
+                        }
+                        if let paLowerBoundName = parameterElement["LowerBoundName"] as? String{
+                            parameter.paLowerBoundName = paLowerBoundName
+                        }
+                        if let paUpperBoundName = parameterElement["UpperBoundName"] as? String{
+                            parameter.paUpperBoundName = paUpperBoundName
+                        }
+                        if let paType = parameterElement["Type"] as? Int{
+                            if let type = EnumSearchResultParameterType(rawValue: paType){
+                                parameter.paType = type
+                            }
+                        }
+                        if let paAllowsMultipleValues = parameterElement["AllowsMultipleValues"] as? Bool{
+                            parameter.paAllowsMultipleValues = paAllowsMultipleValues
+                        }
+                        if let paMutualExclusionGroup = parameterElement["MutualExclusionGroup"] as? String{
+                            parameter.paMutualExclusionGroup = paMutualExclusionGroup
+                        }
+                        if let paDependentOn = parameterElement["DependentOn"] as? String{
+                            parameter.paDependentOn = paDependentOn
+                        }
+                        if let paExternalOptionsKey = parameterElement["ExternalOptionsKey"] as? String{
+                            parameter.paExternalOptionKey = paExternalOptionsKey
+                        }
+                        if let paOptionElements = parameterElement["Options"] as? [[String:String]]{
+                            for optionElement in paOptionElements{
+                                let paOption = TmtSearchResultParameterOption()
+                                if let poValue = optionElement["Value"]{
+                                    paOption.poValue = poValue
+                                }
+                                if let poDisplay = optionElement["Display"]{
+                                    paOption.poDisplay = poDisplay
+                                }
+                                parameter.paOptions.append(paOption)
+                            }
+                        }
+                        searchResult.srParameters.append(parameter)
+                    }
+                }
+                
+                if let srSortOrderElements = jsonObject["SortOrders"] as? [[String:String]]{
+                    for sortOrderElement in srSortOrderElements{
+                        let sortOrder = TmtSearchResultParameterOption()
+                        if let poValue = sortOrderElement["Value"] {
+                            sortOrder.poValue = poValue
+                        }
+                        if let poDisplay = sortOrderElement["Display"]{
+                            sortOrder.poDisplay = poDisplay
+                        }
+                        searchResult.srSortOrders.append(sortOrder)
+                    }
+                }
+                if let srMemberProfileElement = jsonObject["MemberProfile"] as? [String:AnyObject]{
+                    if let mpFirstName = srMemberProfileElement["FirstName"] as? String{
+                        searchResult.srMemberProfile.mpFirstName = mpFirstName
+                    }
+                    if let mpOccupation = srMemberProfileElement["Occupation"] as? String{
+                        searchResult.srMemberProfile.mpOccuption = mpOccupation
+                    }
+                    if let mpBiography = srMemberProfileElement["Biography"] as? String{
+                        searchResult.srMemberProfile.mpBiography = mpBiography
+                    }
+                    if let mpQuote = srMemberProfileElement["Quote"] as? String{
+                        searchResult.srMemberProfile.mpQuote = mpQuote
+                    }
+                    if let mpPhoto = srMemberProfileElement["Photo"] as? String{
+                        searchResult.srMemberProfile.mpPhoto = mpPhoto
+                    }
+                    if let mpIsEnabled = srMemberProfileElement["IsEnabled"] as? Bool{
+                        searchResult.srMemberProfile.mpIsEnabled = mpIsEnabled
+                    }
+                    if let mpDateRemoved = srMemberProfileElement["DateRemoved"] as? String{
+                        if let dateRemoved = parseNSDateFromString(mpDateRemoved){
+                            searchResult.srMemberProfile.mpDateRemoved = dateRemoved
+                        }
+                    }
+                    if let memberElement = srMemberProfileElement["Member"] as? [String:AnyObject]{
+                        if let mpmMemberId = memberElement["MemberId"] as? Int{
+                            searchResult.srMemberProfile.mpMember.mpmMemberId = mpmMemberId
+                        }
+                        if let mpmNickname = memberElement["Nickname"] as? String{
+                            searchResult.srMemberProfile.mpMember.mpmNickname = mpmNickname
+                        }
+                        if let mpmDateAddressVerified = memberElement["DateAddressVerified"] as? String{
+                            if let dateAddressVerified = parseNSDateFromString(mpmDateAddressVerified){
+                                searchResult.srMemberProfile.mpMember.mpmDateAddressVerified = dateAddressVerified
+                            }
+                        }
+                        if let mpmDateJoined = memberElement["DateJoined"] as? String{
+                            if let dateJoined  = parseNSDateFromString(mpmDateJoined){
+                                searchResult.srMemberProfile.mpMember.mpmDateJoined = dateJoined
+                            }
+                        }
+                        if let mpmUniqueNegative = memberElement["UniqueNegative"] as? Int{
+                            searchResult.srMemberProfile.mpMember.mpmUniqueNegative = mpmUniqueNegative
+                        }
+                        if let mpmUniquePositive = memberElement["UniquePositive"] as? Int{
+                            searchResult.srMemberProfile.mpMember.mpmUniquePositive = mpmUniquePositive
+                        }
+                        if let mpmFeedbackCount = memberElement["FeedbackCount"] as? Int{
+                            searchResult.srMemberProfile.mpMember.mpmFeedbackCount = mpmFeedbackCount
+                        }
+                        if let mpmIsAddressVerified = memberElement["IsAddressVerified"] as? Bool{
+                            searchResult.srMemberProfile.mpMember.mpmIsAddressVerified = mpmIsAddressVerified
+                        }
+                        if let mpmSuburb = memberElement["Suburb"] as? String{
+                            searchResult.srMemberProfile.mpMember.mpmSuburb = mpmSuburb
+                        }
+                        if let mpmIsDealer = memberElement["IsDealer"] as? Bool{
+                            searchResult.srMemberProfile.mpMember.mpmIsDealer = mpmIsDealer
+                        }
+                        if let mpmIsAuthenticated = memberElement["IsAuthenticated"] as? Bool{
+                            searchResult.srMemberProfile.mpMember.mpmIsAuthenticated = mpmIsAuthenticated
+                        }
+                        if let mpmIsInTrade = memberElement["IsInTrade"] as? Bool{
+                            searchResult.srMemberProfile.mpMember.mpmIsInTrade = mpmIsInTrade
+                        }
+                        if let mpmImportChargesMayApply = memberElement["ImportChargesMayApply"] as? Bool{
+                            searchResult.srMemberProfile.mpMember.mpmImportChargesMayApply = mpmImportChargesMayApply
+                        }
+                    }
+                    if let mpFavouritedId = srMemberProfileElement["FavouriteId"] as? Int{
+                        searchResult.srMemberProfile.mpFavouritedId = mpFavouritedId
+                    }
+                    if let storeElement = srMemberProfileElement["Store"] as? [String:AnyObject]{
+                        if let mpsName = storeElement["Name"] as? String{
+                            searchResult.srMemberProfile.mpStore.mpsName = mpsName
+                        }
+                        if let mpsLogoImageUri = storeElement["LogoImageUri"] as? String{
+                            searchResult.srMemberProfile.mpStore.mpsLogoImageUri = mpsLogoImageUri
+                        }
+                        if let mpsBannerImageUri = storeElement["BannerImageUri"] as? String{
+                            searchResult.srMemberProfile.mpStore.mpsBannerImageUri = mpsBannerImageUri
+                        }
+                        if let promotionElements = storeElement["Promotions"] as? [[String:String]]{
+                            for promotionElement in promotionElements{
+                                let promotion = TmtSearchResultMemberProfileStorePromotion()
+                                if let imageUri = promotionElement["ImageUri"]{
+                                    promotion.mpspImageUri = imageUri
+                                }
+                                searchResult.srMemberProfile.mpStore.mpsPromotions.append(promotion)
+                            }
+                        }
+                    }
+                }
+            }
+            return searchResult
+        }
+        
+        return nil
+    }
+    
+    private func parseNSDateFromString(dateString:String)->NSDate?{
+        var dateStringFiltered = dateString.stringByReplacingOccurrencesOfString("/Date(", withString: "")
+        dateStringFiltered = dateStringFiltered.stringByReplacingOccurrencesOfString(")/", withString: "")
+        if let milliSecondsSince1970 = Double.init(dateStringFiltered){
+            if milliSecondsSince1970 > 0{
+                return NSDate.init(timeIntervalSince1970: milliSecondsSince1970 / 1000.0)
+            }
+        }
         return nil
     }
     

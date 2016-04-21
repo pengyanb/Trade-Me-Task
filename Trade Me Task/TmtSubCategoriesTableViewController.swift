@@ -149,6 +149,7 @@ class TmtSubCategoriesTableViewController: UITableViewController {
                     if let row = self.tableView.indexPathForSelectedRow?.row{
                         destVc.tmtModel = tmtModel
                         destVc.tmtSelectedCategoryNumber = tmtModel?.getTmtCategories?.cateSubCategories[row].cateNumber
+                        destVc.title = tmtModel?.getTmtCategories?.cateSubCategories[row].cateName ?? "Listing"
                     }
                 }
             }

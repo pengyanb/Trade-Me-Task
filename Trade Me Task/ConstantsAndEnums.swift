@@ -41,7 +41,7 @@ class Constants{
     
     static let NOTI_UPDATE_CATEGORIES_LOADED = "categoriesLoaded"
     static let NOTI_UPDATE_SUB_CATEGORIES_LOADED = "subCategoriesLoaded"
-    static let NOTI_UPDATE_LISTINGS_LOADED = "listingsLoaded"
+    static let NOTI_UPDATE_SEARCH_RESULT_LOADED = "searchResultLoaded"
     
     // MARK: - Segue
     static let SEGUE_SHOW_BROWSE_CATEGORIES = "showBrowseCategoriesSegueIdentifier"
@@ -51,13 +51,14 @@ class Constants{
     // MARK: - Table View Cell
     static let CELL_IDENTIFIER_BROWSE_CATEGORIES = "browseCategoriesTableViewCellIdentifier"
     static let CELL_IDENTIFIER_SUB_CATEGORIES = "subCategoriesTableViewCellIdentifier"
+    static let CELL_IDENTIFIER_LISTING = "listingTableViewCellIdentifier"
     
     // MARK: - NSUserfaults    
     static let NSUSER_DEFAULT_TEMP_TOKEN_KEY = "TradeMeTaskUserDefaultTempTokenKey"
     static let NSUSER_DEFAULT_FINAL_TOKEN_KEY = "TradeMeTaskUserDefaultFinalTokenKey"
 }
 
-
+// MARK: - Enum General Search
 enum EnumGeneralSearchBuy {
     case All
     case BuyNow
@@ -212,6 +213,94 @@ enum EnumGeneralSearchSortOrder{
     }
 }
 
+// MARK: - Enum Search Result
+enum EnumSearchResultReserveState : Int{
+    case None = 0
+    case Met = 1
+    case NotMet = 2
+    case NotApplicable = 3
+    func associatedString()->String{
+        switch  self {
+        case .None:
+            return "None"
+        case .Met:
+            return "Met"
+        case .NotMet:
+            return "NotMet"
+        case .NotApplicable:
+            return "NotApplicable"
+        }
+    }
+}
+
+enum EnumSearchResultGeographicLocationAccuracy : Int{
+    case None = 0
+    case Address = 1
+    case Suburb = 2
+    case Street = 3
+    func associatedString()->String{
+        switch self {
+        case .None:
+            return "None"
+        case .Address:
+            return "Address"
+        case .Suburb:
+            return "Suburb"
+        case .Street:
+            return "Street"
+        }
+    }
+}
+
+enum EnumSearchResultFavouriteType : Int{
+    case None = 0
+    case Category = 1
+    case Search = 3
+    case AttributeSearch = 4
+    case Seller = 6
+    func associatedString()->String{
+        switch self {
+        case .None:
+            return "None"
+        case .Category:
+            return "Category"
+        case .Search:
+            return "Search"
+        case .AttributeSearch:
+            return "AttributeSearch"
+        case .Seller:
+            return "Seller"
+        }
+    }
+}
+
+enum EnumSearchResultParameterType : Int{
+    case IsBoolean  = 0
+    case IsNumeric = 1
+    case IsString = 2
+    case IsPropertyRegionId = 3
+    case IsPropertyDistrictId = 4
+    case IsPropertySuburbId = 5
+    case IsLocation = 6
+    func associatedString()->String{
+        switch self {
+        case .IsBoolean:
+            return "Boolean"
+        case .IsNumeric:
+            return "Numeric"
+        case .IsString:
+            return "String"
+        case .IsPropertyRegionId:
+            return "PropertyRegionId"
+        case .IsPropertyDistrictId:
+            return "PropertyDistrictId"
+        case .IsPropertySuburbId:
+            return "PropertySuburbId"
+        case .IsLocation:
+            return "Location"
+        }
+    }
+}
 
 
 

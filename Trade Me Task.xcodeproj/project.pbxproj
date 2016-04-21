@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B816B5881CC82F5100BE8834 /* TmtSearchResultRelatedClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B816B5871CC82F5100BE8834 /* TmtSearchResultRelatedClass.swift */; };
 		B8205D6E1CC4C841000B26E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D6D1CC4C841000B26E4 /* AppDelegate.swift */; };
 		B8205D701CC4C841000B26E4 /* TmtHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D6F1CC4C841000B26E4 /* TmtHomeViewController.swift */; };
 		B8205D731CC4C841000B26E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B8205D711CC4C841000B26E4 /* Main.storyboard */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B816B5871CC82F5100BE8834 /* TmtSearchResultRelatedClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtSearchResultRelatedClass.swift; sourceTree = "<group>"; };
 		B8205D6A1CC4C841000B26E4 /* Trade Me Task.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Trade Me Task.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8205D6D1CC4C841000B26E4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B8205D6F1CC4C841000B26E4 /* TmtHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TmtHomeViewController.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				B8205DA01CC4F3F7000B26E4 /* ClassExtensions.swift */,
 				B8FB9C991CC626E900AC7576 /* ConstantsAndEnums.swift */,
 				B8FCA5DD1CC6C5A90004E709 /* TmtCategory.swift */,
+				B816B5871CC82F5100BE8834 /* TmtSearchResultRelatedClass.swift */,
 			);
 			name = "Custom Class";
 			sourceTree = "<group>";
@@ -329,6 +332,7 @@
 			files = (
 				B8FCA5E61CC743830004E709 /* TmtListingsTableViewController.swift in Sources */,
 				B8205D701CC4C841000B26E4 /* TmtHomeViewController.swift in Sources */,
+				B816B5881CC82F5100BE8834 /* TmtSearchResultRelatedClass.swift in Sources */,
 				B8205DA11CC4F3F7000B26E4 /* ClassExtensions.swift in Sources */,
 				B8205D6E1CC4C841000B26E4 /* AppDelegate.swift in Sources */,
 				B8FB9C9A1CC626E900AC7576 /* ConstantsAndEnums.swift in Sources */,

@@ -22,3 +22,11 @@ extension NSLayoutConstraint {
         return newConstraint
     }
 }
+
+extension NSDate {
+    func generateDateTimeString()->String{
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd hh:mm"
+        return formatter.stringFromDate(self)
+    }
+}

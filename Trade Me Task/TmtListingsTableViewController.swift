@@ -27,10 +27,14 @@ class TmtListingsTableViewController: UITableViewController {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         showLoadingScreen()
-        tmtModel?.tmtGeneralSearch(nil, category: tmtSelectedCategoryNumber, clearance: nil, condition: nil, dataFrom: nil, expired: nil, memberListing: nil, page: nil, pay: nil, photoSize: EnumGeneralSearchPhotoSize.List, returnMetadata: nil, rows: Constants.COUNT_LISTINGS_LOAD_QUOTA, searchString: searchString, shippingMethod: nil, sortOrder: sortOrder, userDistrict: nil, userRegion: nil)
+        registerNotifications()
+        tmtModel?.tmtGeneralSearch(nil, category: tmtSelectedCategoryNumber, clearance: nil, condition: nil, dataFrom: nil, expired: nil, memberListing: nil, page: nil, pay: nil, photoSize: EnumGeneralSearchPhotoSize.List, returnMetadata: nil, rows: Constants.COUNT_LISTINGS_LOAD_QUOTA, searchString: searchString, shippingMethod: nil, sortOrder: sortOrder, userDistrict: nil, userRegion: nil, clearExistingResult: true)
         self.tableView.reloadData()
     }
-    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        deregisterNotifications()
+    }
     // MARK: - Private functions [Loading Spinner]
     private func showLoadingScreen(){
         loadingView.hidden = false
@@ -75,40 +79,83 @@ class TmtListingsTableViewController: UITableViewController {
         if let userInfo = notification.userInfo{
             if let statusInfo = userInfo["update"] as? String{
                 switch statusInfo {
-                case Constants.NOTI_UPDATE_LISTINGS_LOADED:
+                case Constants.NOTI_UPDATE_SEARCH_RESULT_LOADED:
                     dispatch_async(dispatch_get_main_queue(), { [weak self] in
                         if self != nil{
                             self!.hideLoadingScreen()
                             self!.tableView.reloadData()
-                            //!! todo
                         }
                     })
                 default:
                     break
                 }
             }
+            if let errorInfo = userInfo["error"] as? String{
+                dispatch_async(dispatch_get_main_queue(), { [weak self] in
+                    self?.hideLoadingScreen()
+                    UIAlertView.init(title: "Error", message: errorInfo, delegate: nil, cancelButtonTitle: "OK").show()
+                    })
+                
+            }
         }
     }
     // MARK: - Table view data source
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+        if let tmtSearchResults = tmtModel?.getTmtSearchResults{
+            if tmtSearchResults.count > 0{
+                var rowCount : Int = 0
+                for searchResult in tmtSearchResults{
+                    if let pageSize = searchResult.srPageSize{
+                        rowCount += pageSize
+                    }
+                }
+                return rowCount
+            }
+        }
         return 0
     }
 
-    /*
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier(Constants.CELL_IDENTIFIER_LISTING, forIndexPath: indexPath)
 
-        // Configure the cell...
+        if let listingCell = cell as? TmtListingsTableViewCell{
+            if let tmtSearchResults = tmtModel?.getTmtSearchResults{
+                let pageIndex = Int(indexPath.row / Constants.COUNT_LISTINGS_LOAD_QUOTA)
+                let listingIndex = indexPath.row - pageIndex * Constants.COUNT_LISTINGS_LOAD_QUOTA
+                //print("[PageIndex]: \(pageIndex) [ListingIndex]: \(listingIndex)")
+                if tmtSearchResults.count > pageIndex{
+                    let tmtSearchResult = tmtSearchResults[pageIndex]
+                    if listingIndex < tmtSearchResult.srList.count{
+                        let listing = tmtSearchResult.srList[listingIndex]
+                        if let pictureHref = listing.liPictureHref{
+                            if let pictureUrl = NSURL.init(string: pictureHref){
+                                tmtModel?.downloadDataFromUrl(pictureUrl, completion: {(data, response, error) in
+                                    dispatch_async(dispatch_get_main_queue(), { [weak self] in
+                                        if self != nil{
+                                            guard let data = data where error == nil else {return}
+                                            listingCell.listingImageView.image = UIImage(data: data)
+                                        }
+                                    })
+                                })
+                            }
+                        }
+                        listingCell.listingCityLabel.text = listing.liRegion ?? ""
+                        listingCell.listingNameLabel.text = listing.liTitle ?? ""
+                        listingCell.listingPriceLabel.text = (listing.liStartPrice != nil ? "$\(listing.liStartPrice!)" : "")
+                        listingCell.listingTimeLabel.text = (listing.liStartDate != nil ? "\(listing.liStartDate!.generateDateTimeString())" : "")
+                    }
+                }
+            }
+        }
 
         return cell
     }
-    */
+    
 
     /*
     // Override to support conditional editing of the table view.
