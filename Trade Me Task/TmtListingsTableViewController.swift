@@ -151,7 +151,7 @@ class TmtListingsTableViewController: UITableViewController {
                         }
                         listingCell.listingCityLabel.text = listing.liRegion ?? ""
                         listingCell.listingNameLabel.text = listing.liTitle ?? ""
-                        listingCell.listingPriceLabel.text = (listing.liStartPrice != nil ? "$\(listing.liPriceDisplay!)" : "")
+                        listingCell.listingPriceLabel.text = (listing.liStartPrice != nil ? "\(listing.liPriceDisplay!)" : "")
                         listingCell.listingTimeLabel.text = (listing.liStartDate != nil ? "\(listing.liStartDate!.generateDateTimeString())" : "")
                     }
                 }

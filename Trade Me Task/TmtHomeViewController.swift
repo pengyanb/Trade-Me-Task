@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollViewDelegate {
+class TmtHomeViewController: UIViewController, UITextFieldDelegate {
 
     // MARK: - Constants
     private let CONST_CANCEL_BUTTON_EDIT_MODE_SIZE : CGFloat = 60
@@ -21,6 +21,8 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
     private let CONST_SEARCH_SECTION_NORMAL_MODE_WIDTH_PROPORTION : CGFloat = 0.7
     
     private let CONST_SECTION_CHANGE_ANIMATION_PERIOD = 0.5
+    
+    private let oauthHelper = TradeMeOauthHelper()
     
     // MARK: - Variables
     private var scrollViewLastContentOffset : CGFloat = 0
@@ -38,6 +40,7 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
     
     @IBOutlet weak var scrollableContentView: UIView!
     
+    @IBOutlet weak var loginButton: UIBarButtonItem!
     
     // MARK: - Target Actions
     @IBAction func cancelButtonPressed(sender: UIButton) {
@@ -45,19 +48,98 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
         displayNormalModeSearchSection()
     }
     
+    @IBAction func loginButtonPressed(sender: UIBarButtonItem) {
+        let userDefault = NSUserDefaults.standardUserDefaults()
+        if let finalTokenDictionary = userDefault.objectForKey(Constants.NSUSER_DEFAULT_FINAL_TOKEN_KEY) as? [String:String]{
+            if let _ = finalTokenDictionary["oauth_token"], _ = finalTokenDictionary["oauth_token_secret"]{
+                loginButton.title = "Login"
+                
+                userDefault.removeObjectForKey(Constants.NSUSER_DEFAULT_FINAL_TOKEN_KEY)
+                userDefault.removeObjectForKey(Constants.NSUSER_DEFAULT_TEMP_TOKEN_KEY)
+                userDefault.synchronize()
+            }
+            else{
+                handleUserAuthentication()
+            }
+        }
+        else{
+            handleUserAuthentication()
+        }
+
+    }
+    
+    @IBAction func scrollViewTapped(sender: UITapGestureRecognizer) {
+        displayNormalModeSearchSection()
+        self.view.endEditing(true)
+    }
+    
     // MARK: - View Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         searchTextField.delegate = self
-        scrollView.delegate = self
     }
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        print("[viewWillAppear]")
         scrollViewLastContentOffset = 0
         displayNormalModeSearchSection()
+        registerNotifications()
+        handleUserAuthentication()
         
-        let oauthHelper = TradeMeOauthHelper()
-        oauthHelper.handleUserAuthentication(Constants.CREDENTIAL_TRADEME_CONSUMER_KEY, consumerSecret: Constants.CREDENTIAL_TRADEME_CONSUMER_SECRET)
+        let userDefault = NSUserDefaults.standardUserDefaults()
+        if let finalTokenDictionary = userDefault.objectForKey(Constants.NSUSER_DEFAULT_FINAL_TOKEN_KEY) as? [String:String]{
+            if let _ = finalTokenDictionary["oauth_token"], _ = finalTokenDictionary["oauth_token_secret"]{
+                //print("[Final Token]: \(token) [Final TokenSecret]: \(tokenSecret)")
+                loginButton.title = "Logout"
+            }
+            else{
+                loginButton.title = "Login"
+            }
+        }
+        else{
+            loginButton.title = "Login"
+        }
+       
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        deregisterNotifications()
+    }
+    
+    // MARK: - Notification related
+    private func registerNotifications(){
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(handleOauthNotification(_:)), name: Constants.NOTI_IDENTIFIER_OAUTH_UPDATE, object: nil)
+    }
+    
+    private func deregisterNotifications(){
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    func appDidBecomeActive(notification:NSNotification){
+        //print("[appDidBecomeActive]")
+        handleUserAuthentication()
+    }
+    
+    func handleOauthNotification(notification:NSNotification){
+        //print("[Received Oauth Notification]")
+        dispatch_async(dispatch_get_main_queue()) { [weak self] in
+            if self != nil{
+                let userDefault = NSUserDefaults.standardUserDefaults()
+                if let finalTokenDictionary = userDefault.objectForKey(Constants.NSUSER_DEFAULT_FINAL_TOKEN_KEY) as? [String:String]{
+                    if let _ = finalTokenDictionary["oauth_token"], _ = finalTokenDictionary["oauth_token_secret"]{
+                        //print("[Final Token]: \(token) [Final TokenSecret]: \(tokenSecret)")
+                        self!.loginButton.title = "Logout"
+                    }
+                    else{
+                        self!.loginButton.title = "Login"
+                    }
+                }
+                else{
+                    self!.loginButton.title = "Login"
+                }
+            }
+        }
     }
     
     // MARK: - Segue
@@ -75,6 +157,13 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
                     tableVc.tmtModel = tmtModel
                 }
             }
+            else if identifier == Constants.SEGUE_SEARCH_LISTINGS{
+                if let destVc = segue.destinationViewController as? TmtListingsTableViewController{
+                    print("[Search]")
+                    destVc.tmtModel = tmtModel
+                    destVc.searchString = searchTextField.text
+                }
+            }
         }
     }
     
@@ -87,35 +176,15 @@ class TmtHomeViewController: UIViewController, UITextFieldDelegate,  UIScrollVie
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         displayNormalModeSearchSection()
+        self.performSegueWithIdentifier(Constants.SEGUE_SEARCH_LISTINGS, sender: self)
         return true
     }
     
-    // MARK: - delegate methods [UIScrollView]
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        //print("[Offset]: \(scrollView.contentOffset.y)")
-        //print("[View Height]: \(self.view.bounds.size.height)")
-        //print("[Multiplier]: \(newHeightMultiplier)")
-        /*
-        if scrollViewLastContentOffset > scrollView.contentOffset.y {   //scrolled down
-             let newHeightMultiplier = searchSectionHeightLayoutConstraint.multiplier + scrollView.contentOffset.y / self.view.bounds.size.height
-            if searchSectionHeightLayoutConstraint.multiplier < CONST_SEARCH_SECTION_NORMAL_MODE_HEIGHT_PROPORTION{
-                searchSectionHeightLayoutConstraint = searchSectionHeightLayoutConstraint.setMultiplier(min(CONST_SEARCH_SECTION_NORMAL_MODE_HEIGHT_PROPORTION, newHeightMultiplier))
-                self.view.setNeedsLayout()
-            }
-        }
-        else if scrollViewLastContentOffset < scrollView.contentOffset.y { //scrolled up
-            //print("[Scrolled up]")
-             let newHeightMultiplier = searchSectionHeightLayoutConstraint.multiplier - scrollView.contentOffset.y / self.view.bounds.size.height
-            if searchSectionHeightLayoutConstraint.multiplier > CONST_SEARCH_SECTION_EDIT_MODE_HEIGHT_PROPORTION{
-                searchSectionHeightLayoutConstraint =  searchSectionHeightLayoutConstraint.setMultiplier(max(CONST_SEARCH_SECTION_EDIT_MODE_HEIGHT_PROPORTION, newHeightMultiplier))
-                self.view.setNeedsLayout()
-            }
-        }
-        scrollViewLastContentOffset = scrollView.contentOffset.y
-         */
+    // MARK: - private func
+    private func handleUserAuthentication(){
+        oauthHelper.handleUserAuthentication(Constants.CREDENTIAL_TRADEME_CONSUMER_KEY, consumerSecret: Constants.CREDENTIAL_TRADEME_CONSUMER_SECRET)
     }
     
-    // MARK: - private func
     private func displayNormalModeSearchSection(){
         searchTextField.textAlignment = NSTextAlignment.Center
         cancelButtonWidthLayoutConstraint.constant = CONST_CANCEL_BUTTON_NORMAL_MODE_SIZE

@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,7 +17,36 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Trade Me Task" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cVt-4W-kgT">
+                                <rect key="frame" x="20" y="286" width="560" height="29"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="By Peng Yanbing [Peter]" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LL1-2g-QoG">
+                                <rect key="frame" x="20" y="323" width="560" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="cVt-4W-kgT" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="GPj-KL-Cb1"/>
+                            <constraint firstItem="cVt-4W-kgT" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="VGI-AL-CUG"/>
+                            <constraint firstItem="LL1-2g-QoG" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="bCH-kQ-3xt"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="cVt-4W-kgT" secondAttribute="trailing" id="kOF-aZ-Xqx"/>
+                            <constraint firstItem="LL1-2g-QoG" firstAttribute="top" secondItem="cVt-4W-kgT" secondAttribute="bottom" constant="8" symbolic="YES" id="mTj-GZ-zly"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="LL1-2g-QoG" secondAttribute="trailing" id="pgB-qQ-bCh"/>
+                            <constraint firstItem="cVt-4W-kgT" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="vYb-MM-292"/>
+                            <constraint firstItem="cVt-4W-kgT" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="253" id="yQU-zs-Kg0"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="yQU-zs-Kg0"/>
+                            </mask>
+                        </variation>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>

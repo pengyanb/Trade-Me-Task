@@ -38,6 +38,7 @@ class Constants{
     
     // MARK: - Notifications
     static let NOTI_IDENTIFIER_TMT_MODEL_CHANGED = "TradeMeTaskApiAccessModelChangedNotification"
+    static let NOTI_IDENTIFIER_OAUTH_UPDATE = "TradeMeOauthHelperUpdateNotification"
     
     static let NOTI_UPDATE_CATEGORIES_LOADED = "categoriesLoaded"
     static let NOTI_UPDATE_SUB_CATEGORIES_LOADED = "subCategoriesLoaded"
@@ -49,6 +50,7 @@ class Constants{
     static let SEGUE_SHOW_SUB_CATEGORIES = "showSubCategoriesSegueIdentifier"
     static let SEGUE_SHOW_LISTINGS = "showListingsSegueIdentifier"
     static let SEGUE_SHOW_LISTING_DETAILS = "showListingDetailsSegueIdentifier"
+    static let SEGUE_SEARCH_LISTINGS = "searchListingsSegueIdentifier"
     
     // MARK: - Table View Cell
     static let CELL_IDENTIFIER_BROWSE_CATEGORIES = "browseCategoriesTableViewCellIdentifier"
