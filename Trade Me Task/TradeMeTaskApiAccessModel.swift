@@ -11,10 +11,17 @@ import Foundation
 class TradeMeTaskApiAccessModel: NSObject {
     
     // MARK: - variables
-    private var tmtCategories : TmtCategory? = TmtCategory()
-    var getTmtCategories : TmtCategory?{
+    private var tmtRootCategories : TmtCategory? = TmtCategory()
+    var getTmtRootCategories : TmtCategory?{
         get {
-            return tmtCategories
+            return tmtRootCategories
+        }
+    }
+    
+    private var tmtSubCategories : TmtCategory? = TmtCategory()
+    var getTmtSubCategories : TmtCategory?{
+        get {
+            return tmtSubCategories
         }
     }
     
@@ -34,7 +41,7 @@ class TradeMeTaskApiAccessModel: NSObject {
         
     // MARK: - Public API
     func tmtGategoryBrowsing(categoryNumber:String, depth:Int, withCount:Bool){
-        tmtCategories = TmtCategory()
+        //tmtCategories = TmtCategory()
         
         let categoryBrowsingUrl = Constants.TRADEME_CATEGORY_BROWSING_URL + categoryNumber + ".json?depth=\(depth)&with_counts=\(withCount ? "true" : "false")"
         
@@ -55,12 +62,14 @@ class TradeMeTaskApiAccessModel: NSObject {
                         //print("[JSON Response]: \(jsonResponse)")
                         if let parsedCategories = self!.processTmtBrowseCategoriesJsonResponse(jsonResponse){
                             print("[TmtCategories]:\n\(parsedCategories)")
-                            self!.tmtCategories = parsedCategories
+                            
                             if let cateName = parsedCategories.cateName{
                                 if cateName == "Root"{
+                                    self!.tmtRootCategories = parsedCategories
                                     self!.postModelChangedNotification(Constants.NOTI_UPDATE_CATEGORIES_LOADED, type: "update")
                                 }
                                 else{
+                                    self!.tmtSubCategories = parsedCategories
                                     self!.postModelChangedNotification(Constants.NOTI_UPDATE_SUB_CATEGORIES_LOADED, type: "update")
                                 }
                             }

@@ -45,12 +45,16 @@ class Constants{
     static let NOTI_UPDATE_SEARCH_RESULT_LOADED = "searchResultLoaded"
     static let NOTI_UPDATE_LISTING_DETAILS_LOADED = "listingDetailsLoaded"
     
+    static let NOTI_NEED_SWITCH_IPAD_DETAILED_CONTENT = "tmtNeedToSwitchIpadDetailedContent"
+    
     // MARK: - Segue
     static let SEGUE_SHOW_BROWSE_CATEGORIES = "showBrowseCategoriesSegueIdentifier"
     static let SEGUE_SHOW_SUB_CATEGORIES = "showSubCategoriesSegueIdentifier"
     static let SEGUE_SHOW_LISTINGS = "showListingsSegueIdentifier"
     static let SEGUE_SHOW_LISTING_DETAILS = "showListingDetailsSegueIdentifier"
     static let SEGUE_SEARCH_LISTINGS = "searchListingsSegueIdentifier"
+    
+    static let SEGUE_SHOW_IPAD_BROWSE_CATEGORIES_MENU = "showIpadBrowseCategoriesMenuSegueIdentifier"
     
     // MARK: - Table View Cell
     static let CELL_IDENTIFIER_BROWSE_CATEGORIES = "browseCategoriesTableViewCellIdentifier"

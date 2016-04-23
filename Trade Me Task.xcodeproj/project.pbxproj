@@ -16,6 +16,7 @@
 		B8205D831CC4C841000B26E4 /* Trade_Me_TaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D821CC4C841000B26E4 /* Trade_Me_TaskTests.swift */; };
 		B8205D8E1CC4C841000B26E4 /* Trade_Me_TaskUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205D8D1CC4C841000B26E4 /* Trade_Me_TaskUITests.swift */; };
 		B8205DA11CC4F3F7000B26E4 /* ClassExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8205DA01CC4F3F7000B26E4 /* ClassExtensions.swift */; };
+		B89003681CCADAB200C47407 /* TmtIpadBrowseCategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89003671CCADAB200C47407 /* TmtIpadBrowseCategoriesViewController.swift */; };
 		B8A773541CC8BD2700548EB9 /* TmtListingDetailsRelatedClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A773531CC8BD2700548EB9 /* TmtListingDetailsRelatedClass.swift */; };
 		B8A773561CC8D1A900548EB9 /* TmtListingDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A773551CC8D1A900548EB9 /* TmtListingDetailsViewController.swift */; };
 		B8FB9C981CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB9C971CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift */; };
@@ -62,6 +63,7 @@
 		B8205D8D1CC4C841000B26E4 /* Trade_Me_TaskUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trade_Me_TaskUITests.swift; sourceTree = "<group>"; };
 		B8205D8F1CC4C841000B26E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B8205DA01CC4F3F7000B26E4 /* ClassExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassExtensions.swift; sourceTree = "<group>"; };
+		B89003671CCADAB200C47407 /* TmtIpadBrowseCategoriesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtIpadBrowseCategoriesViewController.swift; sourceTree = "<group>"; };
 		B8A773531CC8BD2700548EB9 /* TmtListingDetailsRelatedClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtListingDetailsRelatedClass.swift; sourceTree = "<group>"; };
 		B8A773551CC8D1A900548EB9 /* TmtListingDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TmtListingDetailsViewController.swift; sourceTree = "<group>"; };
 		B8FB9C971CC625E100AC7576 /* TradeMeTaskApiAccessModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TradeMeTaskApiAccessModel.swift; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				B8FCA5E31CC712F70004E709 /* TmtSubCategoriesTableViewController.swift */,
 				B8FCA5E51CC743830004E709 /* TmtListingsTableViewController.swift */,
 				B8A773551CC8D1A900548EB9 /* TmtListingDetailsViewController.swift */,
+				B89003671CCADAB200C47407 /* TmtIpadBrowseCategoriesViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B89003681CCADAB200C47407 /* TmtIpadBrowseCategoriesViewController.swift in Sources */,
 				B8FCA5E61CC743830004E709 /* TmtListingsTableViewController.swift in Sources */,
 				B8A773561CC8D1A900548EB9 /* TmtListingDetailsViewController.swift in Sources */,
 				B8205D701CC4C841000B26E4 /* TmtHomeViewController.swift in Sources */,

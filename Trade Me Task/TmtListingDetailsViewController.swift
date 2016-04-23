@@ -23,6 +23,7 @@ class TmtListingDetailsViewController: UIViewController {
     
     private var currentImageIndex  = 0
     
+    var isInIPadViewContainer = false
     // MARK: - Outlets
     
     @IBOutlet weak var imageGalleryIndexLabel: UILabel!

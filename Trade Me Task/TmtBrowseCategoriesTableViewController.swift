@@ -110,7 +110,7 @@ class TmtBrowseCategoriesTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let tmtCategories = tmtModel?.getTmtCategories{
+        if let tmtCategories = tmtModel?.getTmtRootCategories{
             return tmtCategories.cateSubCategories.count
         }
         return 0
@@ -119,7 +119,7 @@ class TmtBrowseCategoriesTableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(Constants.CELL_IDENTIFIER_BROWSE_CATEGORIES, forIndexPath: indexPath)
 
-        if let tmtCategories = tmtModel?.getTmtCategories{
+        if let tmtCategories = tmtModel?.getTmtRootCategories{
             if tmtCategories.cateSubCategories.count > indexPath.row{
                 cell.textLabel?.text = tmtCategories.cateSubCategories[indexPath.row].cateName ?? ""
             }
@@ -128,7 +128,7 @@ class TmtBrowseCategoriesTableViewController: UITableViewController {
     }
  
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.row < tmtModel?.getTmtCategories?.cateSubCategories.count{
+        if indexPath.row < tmtModel?.getTmtRootCategories?.cateSubCategories.count{
             self.performSegueWithIdentifier(Constants.SEGUE_SHOW_SUB_CATEGORIES, sender: self)
         }
     }
@@ -141,7 +141,7 @@ class TmtBrowseCategoriesTableViewController: UITableViewController {
                 if let destVc = segue.destinationViewController as? TmtSubCategoriesTableViewController{
                     if let row = self.tableView.indexPathForSelectedRow?.row{
                         destVc.tmtModel = tmtModel
-                        destVc.subCategoryNumber = tmtModel?.getTmtCategories?.cateSubCategories[row].cateNumber
+                        destVc.subCategoryNumber = tmtModel?.getTmtRootCategories?.cateSubCategories[row].cateNumber
                         //print("subCategoryNumber: \(destVc.subCategoryNumber)")
                     }
                 }

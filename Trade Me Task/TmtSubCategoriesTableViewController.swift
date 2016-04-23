@@ -17,6 +17,8 @@ class TmtSubCategoriesTableViewController: UITableViewController {
     private let loadingView = UIView()
     private let spinner = UIActivityIndicatorView()
     
+    var isInIPadViewContainer = false
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,8 +87,8 @@ class TmtSubCategoriesTableViewController: UITableViewController {
                         if self != nil{
                             self!.hideLoadingScreen()
                             self!.tableView.reloadData()
-                            self?.title = self?.tmtModel?.getTmtCategories?.cateName
-                            print("[Page Title]: \(self?.tmtModel?.getTmtCategories?.cateName)")
+                            self?.title = self?.tmtModel?.getTmtSubCategories?.cateName
+                            print("[Page Title]: \(self?.tmtModel?.getTmtSubCategories?.cateName)")
                         }
                         })
                 default:
@@ -110,7 +112,7 @@ class TmtSubCategoriesTableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let tmtCategories = tmtModel?.getTmtCategories{
+        if let tmtCategories = tmtModel?.getTmtSubCategories{
             return tmtCategories.cateSubCategories.count
         }
         return 0
@@ -120,7 +122,7 @@ class TmtSubCategoriesTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCellWithIdentifier(Constants.CELL_IDENTIFIER_SUB_CATEGORIES, forIndexPath: indexPath)
 
         if let subCateCell = cell as? TmtSubCategoriesTableViewCell{
-            if let tmtCategories = tmtModel?.getTmtCategories{
+            if let tmtCategories = tmtModel?.getTmtSubCategories{
                 if tmtCategories.cateSubCategories.count > indexPath.row{
                     subCateCell.labelSubCategoryName.text = tmtCategories.cateSubCategories[indexPath.row].cateName ?? ""
                     let count = tmtCategories.cateSubCategories[indexPath.row].cateCount
@@ -134,20 +136,37 @@ class TmtSubCategoriesTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.row < tmtModel?.getTmtCategories?.cateSubCategories.count{
-            self.performSegueWithIdentifier(Constants.SEGUE_SHOW_LISTINGS, sender: self)
+        if indexPath.row < tmtModel?.getTmtSubCategories?.cateSubCategories.count{
+            if isInIPadViewContainer{
+                ipadSwithDetailedContainerContent()
+            }
+            else{
+                self.performSegueWithIdentifier(Constants.SEGUE_SHOW_LISTINGS, sender: self)
+            }
         }
     }
     
     // MARK: - Navigation
+    private func ipadSwithDetailedContainerContent(){
+        if isInIPadViewContainer{
+            if let row = self.tableView.indexPathForSelectedRow?.row{
+                print("\(row)")
+                if let selectedCategoryNumber = tmtModel?.getTmtSubCategories?.cateSubCategories[row].cateNumber{
+                    print("\(selectedCategoryNumber)")
+                    NSNotificationCenter.defaultCenter().postNotificationName(Constants.NOTI_NEED_SWITCH_IPAD_DETAILED_CONTENT, object: self, userInfo: [ "segueIdentifier": Constants.SEGUE_SHOW_LISTINGS, "selectedCategoryNumber" : selectedCategoryNumber])
+                }
+            }
+        }
+    }
+    
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let identifier = segue.identifier{
             if identifier == Constants.SEGUE_SHOW_LISTINGS{
                 if let destVc = segue.destinationViewController as? TmtListingsTableViewController{
                     if let row = self.tableView.indexPathForSelectedRow?.row{
                         destVc.tmtModel = tmtModel
-                        destVc.tmtSelectedCategoryNumber = tmtModel?.getTmtCategories?.cateSubCategories[row].cateNumber
-                        destVc.title = tmtModel?.getTmtCategories?.cateSubCategories[row].cateName ?? "Listing"
+                        destVc.tmtSelectedCategoryNumber = tmtModel?.getTmtSubCategories?.cateSubCategories[row].cateNumber
+                        destVc.title = tmtModel?.getTmtSubCategories?.cateSubCategories[row].cateName ?? "Listing"
                     }
                 }
             }

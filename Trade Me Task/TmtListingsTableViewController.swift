@@ -21,6 +21,8 @@ class TmtListingsTableViewController: UITableViewController {
     
     private var readyToFetchMoreListing  = true
     
+    var isInIPadViewContainer = false
+    
     // MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -168,13 +170,37 @@ class TmtListingsTableViewController: UITableViewController {
             if tmtSearchResults.count > pageIndex{
                 let tmtSearchResult = tmtSearchResults[pageIndex]
                 if listingIndex < tmtSearchResult.srList.count{
-                    self.performSegueWithIdentifier(Constants.SEGUE_SHOW_LISTING_DETAILS, sender: self)
+                    if isInIPadViewContainer{
+                        ipadSwithDetailedContainerContent()
+                    }
+                    else{
+                        self.performSegueWithIdentifier(Constants.SEGUE_SHOW_LISTING_DETAILS, sender: self)
+                    }
                 }
             }
         }
     }
     
     // MARK: - Navigation
+    private func ipadSwithDetailedContainerContent(){
+        if isInIPadViewContainer{
+            if let indexPath = self.tableView.indexPathForSelectedRow{
+                let pageIndex = Int(indexPath.row / Constants.COUNT_LISTINGS_LOAD_QUOTA)
+                let listingIndex = indexPath.row - pageIndex * Constants.COUNT_LISTINGS_LOAD_QUOTA
+                if let tmtSearchResults = tmtModel?.getTmtSearchResults{
+                    if tmtSearchResults.count > pageIndex{
+                        let tmtSearchResult = tmtSearchResults[pageIndex]
+                        if listingIndex < tmtSearchResult.srList.count{
+                            if let listingId  = tmtSearchResult.srList[listingIndex].liListingId
+                            {
+                                NSNotificationCenter.defaultCenter().postNotificationName(Constants.NOTI_NEED_SWITCH_IPAD_DETAILED_CONTENT, object: self, userInfo: ["segueIdentifier": Constants.SEGUE_SHOW_LISTING_DETAILS, "listingId" : listingId])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if let identifier = segue.identifier{
             if identifier == Constants.SEGUE_SHOW_LISTING_DETAILS{
